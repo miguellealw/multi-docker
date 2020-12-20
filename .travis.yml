@@ -1,0 +1,30 @@
+sudo: required
+language: node_js
+node_js: 14
+notifications:
+  email: false
+
+services:
+  - docker
+
+# Build dev image to test
+before_install:
+  - docker build -t miguelleal96/react-test -f ./client/Dockerfile.dev ./client
+
+# Run tests
+script:
+  - docker run -e CI=true miguelleal96/react-test npm test
+
+# If tests pass build the final images for each service
+after_success:
+  - docker build -t miguelleal96/multi-client ./client
+  - docker build -t miguelleal96/multi-nginx ./nginx
+  - docker build -t miguelleal96/multi-server ./server
+  - docker build -t miguelleal96/multi-worker ./worker 
+  # Login to docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those iamges and push them to docker hub
+  - docker push miguelleal96/multi-client
+  - docker push miguelleal96/multi-nginx
+  - docker push miguelleal96/multi-server
+  - docker push miguelleal96/multi-worker
