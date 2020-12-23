@@ -20,7 +20,7 @@ after_success:
   - docker build -t miguelleal96/multi-client ./client
   - docker build -t miguelleal96/multi-nginx ./nginx
   - docker build -t miguelleal96/multi-server ./server
-  - docker build -t miguelleal96/multi-worker ./worker 
+  - docker build -t miguelleal96/multi-worker ./worker
   # Login to docker CLI
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
   # Take those images and push them to docker hub
@@ -28,3 +28,16 @@ after_success:
   - docker push miguelleal96/multi-nginx
   - docker push miguelleal96/multi-server
   - docker push miguelleal96/multi-worker
+
+# deploy:
+#   provider: elasticbeanstalk
+#   # Whatever regions the beanstalk instance is running in
+#   region: "us-east-2"
+#   app: "multi-docker"
+#   env: "MultiDocker-env"
+#   bucket_name: "<bucket-name>"
+#   bucket_path: "<folder inside bucket>"
+#   on:
+#     branch: master
+#   access_key_id: $AWS_ACCESS_KEY
+#   secret_access_key: $AWS_SECRET_KEY
